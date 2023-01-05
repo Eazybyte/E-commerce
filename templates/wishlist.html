@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="section-content padding-y bg">
+        <div class="container">
+
+            <!-- ============================ COMPONENT 1 ================================= -->
+            {% if not wishlist_items %}
+            <h2 class="text-center"> wishlist is Empty</h2>
+            <div class="text-center">
+                <a href="{% url 'store' %}" class="btn btn-primary"> Continue Shopping</a>
+            </div>
+            {% else %}
+            <div class="row">
+                <aside class="col-lg-9">
+                    <div class="card">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                </tr>
+                                <tr></tr>
+                            </thead>
+                            <tbody>
+                                {% for wishlist in wishlist_items %}
+                                <tr>
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside"><img src="{{ wishlist.product.image.url }}"
+                                                    class="img-sm">
+                                            </div>
+                                            <figcaption class="info">
+                                                <a href="{{wishlist.product.get_url}}"
+                                                    class="title text-dark">{{wishlist_item.product.product_name}}</a>
+                                                <p class="text-muted small">
+
+                                                    {% if wishlist.variations.all %}
+                                                    {% for item in wishlist.variations.all %}
+                                                    {{item.variation_category|capfirst}}:{{item.variation_value|capfirst}}<br>
+
+                                                    {% endfor %}
+
+                                                    {% endif %}
+                                                </p>
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+                                    <td>
+
+                                        <div class=" d-flex justify-content-end">
+                                            <a href="{% url 'remove_wishlist_item' wishlist.product.id wishlist.id %}"
+                                                class="mr-3 btn btn-danger"><i class="fa fa-2x  fa-trash"></i> </a>
+                                                
+                                            <a
+                                                href="{% url 'move_to_cart' wishlist.product.id %}"
+                                                class="ml-2 btn btn-primary "><i class="fa fa-2x fa-shopping-cart"></i>
+                                            </a>
+                                            
+                                            {% comment %} <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal"><i class="fa fa-2x fa-shopping-cart"></i>
+
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal
+                                                                title
+                                                            </h1>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="">
+
+                                                                <div class="d-flex justify-content-between">
+                                                                    <select name="color" class="form-control" required>
+                                                                        <option value="" disabled selected>Select
+                                                                        </option>
+
+                                                                        <option value="">hhb</option>
+
+                                                                    </select>
+                                                                    <select name="size" class="form-control" required>
+                                                                        <option value="" disabled selected>Select
+                                                                        </option>
+
+                                                                        <option value="">hlo</option>
+
+                                                                    </select>
+
+                                                                </div>
+
+
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">submit</button>
+                                                                </div>
+
+                                                            </form>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+ {% endcomment %}
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- card.// -->
+
+                </aside>
+            </div> <!-- row.// -->
+            <!-- ============================ COMPONENT 1 END .// ================================= -->
+            {% endif %}
+        </div> <!-- container .//  -->
+    </section>
+{% endblock content %}

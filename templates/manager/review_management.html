@@ -1,0 +1,75 @@
+{% extends 'admin_base.html' %} 
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+  <div class="container mb-5 mt-5" >
+    <div class="row">
+      {% include 'includes/admindashboardsidebar.html' %}
+      <main class="col-md-9">
+      <h2 class="text-center font-weight-bold text-dark my-5">Review Management</h2>
+        <div class= " d-flex justify-content-end">
+        <form action="" class="search" method="POST" >
+          {% csrf_token %}
+          <div class="mb-3">
+            <div class="input-group  ">
+              <input type="text" id="form1" class="form-control" placeholder = "search" name = "key" />
+              
+            <button class="btn btn-dark" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          </div>
+        </form>
+      </div>
+        <table class="table bg-white">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <!-- <th scope="col">User</th> -->
+              <th scope="col">Product Name</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Review</th>
+              <th scope="col">Status</th>
+              <!-- <th scope="col"></th> -->
+              <!-- <th scope="col"></th> -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for review in reviews %}
+            <tr>
+              <th>{{ review.id }}</th>
+              <!-- <td>{{ review.user }}</td> -->
+              <td>{{ review.product }}</td>
+              <td>{{ review.rating }}</td>
+              <td>{{ review.review }}</td>
+              <td>{% if review.status %}
+                <i class="fas fa-check-circle" style="color: #28a745"></i>
+                {% else %}
+                <i class="fas fa-times-circle" style="color: #c21010"></i>
+                {% endif %}
+              </td>
+                <td>
+                  {% if review.status %}
+                  <a href="{% url 'review_block' review.id %}" class="btn btn-warning btn-sm">Block</a>
+                  {% else %}
+                  <a href="{% url 'review_unblock' review.id %}" class="btn btn-dark btn-sm">Un Block</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if review %}
+                  <a href="{% url 'review_delete' review.id %}" class="btn btn-danger btn-sm">Delete</a>
+                  {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <!-- order-group.// -->
+      </main>
+    </div>
+    <!-- row.// -->
+  </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+ {% endblock %}
