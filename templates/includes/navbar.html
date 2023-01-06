@@ -1,7 +1,7 @@
 {% load static %}
 
 <header class="section-header">
-    <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
+    {% comment %} <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
         <div class="container">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +23,7 @@
                 </ul> <!-- list-inline //  -->
             </div> <!-- navbar-collapse .// -->
         </div> <!-- container //  -->
-    </nav>
+    </nav> {% endcomment %}
 
     <section class="header-main border-bottom">
         <div class="container">
@@ -49,7 +49,7 @@
                 <div class="col-lg  col-md-6 col-sm-12 col">
                     <form action="{% url 'search' %}" class="search" methode="GET">
                         <div class="input-group w-100">
-                            <input type="text" class="form-control" style="width:60%;" name='keyword' placeholder="Search">
+                            <input type="text" class="form-control" style="width:60%;" name='keyword' placeholder="Search" required >
 
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">
