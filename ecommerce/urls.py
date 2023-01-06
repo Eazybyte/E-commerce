@@ -29,4 +29,9 @@ urlpatterns = [
     path('adm/',include('adminpanel.urls')),
     path('wishlist/',include('wishlist.urls')),
     path('orders/',include('orders.urls')),
-] + static(settings.MEDIA_URL,document_root= settings.MEDIA_ROOT)
+] 
+
+urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
