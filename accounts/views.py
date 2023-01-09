@@ -138,6 +138,10 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, 'Your account has been Activated')
+        user_profile = UserProfile.objects.create(
+            user = user
+        )
+        user_profile.save()
         return redirect('login')
     else:
         messages.error(request, 'Inavlid Link')
@@ -217,13 +221,12 @@ def resetPassword(request):
         return render(request, "resetPassword.html")
 
 
-@login_required(login_url='login')
+@login_required(login_url ='login')
 def edit_profile(request):
     userprofile = get_object_or_404(UserProfile, user=request.user)
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
-        profile_form = UserProfileForm(
-            request.POST, request.FILES, instance=userprofile)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -237,7 +240,7 @@ def edit_profile(request):
         'profile_form': profile_form,
         'userprofile': userprofile,
     }
-
+    
     return render(request, 'edit_profile.html', context)
 
 

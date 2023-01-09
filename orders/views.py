@@ -111,7 +111,6 @@ def place_order(request, total=0, quantity=0):
             data.save()
             order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
             request.session['order_number'] = order_number
-            # print(f"order no : ${request.session['order_number']}")
             return redirect('payments')
     else:
         return redirect('checkout')
@@ -248,11 +247,19 @@ def my_orders(request):
         'orders':  order,
     }
     return render(request, 'my_orders.html', context)
+
 @login_required(login_url='login')
-
-
 def user_cancel_order(request, order_number):
-    order = Order.objects.get(order_number=order_number)
+    current_user = request.user
+    order = Order.objects.get(user=current_user, is_ordered=True,order_number = order_number)
+    payment=Payment.objects.get(order_number=order_number)
+    currency = 'INR'
+    razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+    amount= float(payment.amount_paid)
+    print(amount)
+    payment_id = payment.payment_id
+    refund = razorpay_client.payment.refund(payment_id,dict(amount=int(amount)*100))
+    print((refund))
     order.status = 'Order Cancelled'
     order.save()
 

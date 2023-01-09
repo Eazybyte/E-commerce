@@ -3,151 +3,152 @@
 {% block content %}
 
 <section class="section-content padding-y bg">
-    <div class="container">
-    
+  <div class="container">
+
     <!-- ============================ COMPONENT 1 ================================= -->
- 
+
     <div class="row">
-        <aside class="col-lg-8">
-    
+      <aside class="col-lg-8">
+
         <div class="card">
-            <h5 class="card-header">Billing Address</h5>
-            <div class="card-body">
-              <h5 class="card-title">{{order.full_name}}</h5>
-              <p class="card-text mb-0">{{order.full_address}}</p>
-              <p class="card-text mb-0">{{order.city}}, {{order.state}}</p>
-              <p class="card-text mb-0">{{order.zipcode}}</p>
-              <p class="card-text mb-0"><i class="fa fa-envelope" aria-hidden="true"></i> {{order.email}}</p>
-              <p class="card-text mb-0"><i class="fa fa-phone" aria-hidden="true"></i> {{order.phone_number}}</p>
-              {% if order.order_note %}
-                <b>Order Note:</b>{{ order.order_note }}
-              {% endif %}
-            </div>
-        </div> 
-        <div class="card">
-            <h5 class="card-header">Payment Methods</h5>
-            <div class="card-body">
-              <h5 class="card-title">RazorPay</h5>
-            </div>
+          <h5 class="card-header">Billing Address</h5>
+          <div class="card-body">
+            <h5 class="card-title">{{order.full_name}}</h5>
+            <p class="card-text mb-0">{{order.full_address}}</p>
+            <p class="card-text mb-0">{{order.city}}, {{order.state}}</p>
+            <p class="card-text mb-0">{{order.zipcode}}</p>
+            <p class="card-text mb-0"><i class="fa fa-envelope" aria-hidden="true"></i> {{order.email}}</p>
+            <p class="card-text mb-0"><i class="fa fa-phone" aria-hidden="true"></i> {{order.phone_number}}</p>
+            {% if order.order_note %}
+            <b>Order Note:</b>{{ order.order_note }}
+            {% endif %}
+          </div>
         </div>
         <div class="card">
-            <h5 class="card-header">Review Product</h5>
-            <div class="card-body">
-              <table class="table table-borderless table-shopping-cart">
-                <thead class="text-muted">
-                  <tr class="small text-uppercase">
-                    <th scope="col">Product</th>
-                    <th scope="col" width="120">Quantity</th>
-                    <th scope="col" width="120">Price</th>
-                  </tr>
-                </thead>
-                <tbody> 
+          <h5 class="card-header">Payment Methods</h5>
+          <div class="card-body">
+            <h5 class="card-title">RazorPay</h5>
+          </div>
+        </div>
+        <div class="card">
+          <h5 class="card-header">Review Product</h5>
+          <div class="card-body">
+            <table class="table table-borderless table-shopping-cart">
+              <thead class="text-muted">
+                <tr class="small text-uppercase">
+                  <th scope="col">Product</th>
+                  <th scope="col" width="120">Quantity</th>
+                  <th scope="col" width="120">Price</th>
+                </tr>
+              </thead>
+              <tbody>
 
-                  {% for cart_item in cart_items %}
-                  <tr>
-                    <td>
-                      <figure class="itemside align-items-center">
-                        <div class="aside">
-                          <img src="{{ cart_item.product.image.url }}" class="img-sm" />
-                        </div>
-                        <figcaption class="info">
-                          <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                          <p class="text-muted small">
-                            {% if cart_item.variations.all %}
-                              {% for variation in cart_item.variations.all %}
-                                {{ variation.variation_category | capfirst }} : {{ variation.variation_value }}<br>
-                              {% endfor %} 
-                            {% endif %}
-                          </p>
-                        </figcaption>
-                      </figure>
-                    </td>
-                    <td class="price-wrap">
-                      <label for="" class="price ml-md-4 pl-md-2">{{ cart_item.quantity }}</label>
-                    </td>
-                    <td>
-                      <div class="price-wrap">
-                        <var class="price">₹{{ cart_item.sub_total }}</var>
-                        <small class="text-muted"> {{ cart_item.product.price }} each </small>
+                {% for cart_item in cart_items %}
+                <tr>
+                  <td>
+                    <figure class="itemside align-items-center">
+                      <div class="aside">
+                        <img src="{{ cart_item.product.image.url }}" class="img-sm" />
                       </div>
-                      <!-- price-wrap .// -->
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              
-            </div>
-        
+                      <figcaption class="info">
+                        <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{
+                          cart_item.product.product_name }}</a>
+                        <p class="text-muted small">
+                          {% if cart_item.variations.all %}
+                          {% for variation in cart_item.variations.all %}
+                          {{ variation.variation_category | capfirst }} : {{ variation.variation_value }}<br>
+                          {% endfor %}
+                          {% endif %}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  </td>
+                  <td class="price-wrap">
+                    <label for="" class="price ml-md-4 pl-md-2">{{ cart_item.quantity }}</label>
+                  </td>
+                  <td>
+                    <div class="price-wrap">
+                      <var class="price">₹{{ cart_item.sub_total }}</var>
+                      <small class="text-muted"> {{ cart_item.product.price }} each </small>
+                    </div>
+                    <!-- price-wrap .// -->
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+          </div>
+
         </div> <!-- card.// -->
-    
-        </aside> <!-- col.// -->
-        <aside class="col-lg-4">
-    
-            <div class="card">
-            <div class="card-body">
-                <dl class="dlist-align">
-                  <dt>Total price:</dt>
-                  <dd class="text-right">₹ {{ total }}</dd>
-                </dl>
-                <dl class="dlist-align">
-                  <dt>Delivery:</dt>
-                  <dd class="text-right">₹ {{ tax }}</dd>
-                </dl>
-                <dl class="dlist-align">
-                  <dt>Total:</dt>
-                  <dd class="text-right text-dark b"><strong>₹ {{ grand_total }}</strong></dd>
-                </dl>
-                <hr>
-                <p class="text-center mb-3">
-                    <img src="{% static './images/misc/payments.png' %}" height="26">
-                </p>
+
+      </aside> <!-- col.// -->
+      <aside class="col-lg-4">
+
+        <div class="card">
+          <div class="card-body">
+            <dl class="dlist-align">
+              <dt>Total price:</dt>
+              <dd class="text-right">₹ {{ total }}</dd>
+            </dl>
+            <dl class="dlist-align">
+              <dt>Delivery:</dt>
+              <dd class="text-right">₹ {{ tax }}</dd>
+            </dl>
+            <dl class="dlist-align">
+              <dt>Total:</dt>
+              <dd class="text-right text-dark b"><strong>₹ {{ grand_total }}</strong></dd>
+            </dl>
+            <hr>
+            <p class="text-center mb-3">
+              <img src="{% static './images/misc/payments.png' %}" height="26">
+            </p>
 
 
-                
-        <!-- RazorPay Content -->
-      {% if payment %}
-      <form action="{% url 'payment_status' %}" method="POST">
-        <script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        data-key="{{razorpay_merchant_key}}"
-        data-amount="{{ payment.amount }}"
-        data-currency="INR"
-        data-order_id="{{ payment.id }}"
-        data-buttontext="Pay with RazorPay"
-        data-name="Great cart"
-        data-description="product"
-        data-image=""
-        data-prefill.name="{{ order.full_name }}"
-        data-prefill.email="{{user.email}}"
-        data-theme.color="#000"
-      ></script>
-      <input type="hidden" custom="Hidden Element" name="hidden">
-      </form>
-      {% endif %}
 
-      <!-- add style to payment button -->
-      <script>
-        var element = document.querySelector('.razorpay-payment-button');
-        element.className += ' btn btn-primary btn-block';
-      </script>
+            <!-- RazorPay Content -->
+            {% if payment %}
+            <form action="{% url 'payment_status' %}" method="POST">
+              <script
+              src="https://checkout.razorpay.com/v1/checkout.js"
+              data-key="{{razorpay_merchant_key}}"
+              data-amount="{{ payment.amount }}"
+              data-currency="INR"
+              data-order_id="{{ payment.id }}"
+              data-buttontext="Pay with RazorPay"
+              data-name="Great cart"
+              data-description="product"
+              data-image=""
+              data-prefill.name="{{ order.full_name }}"
+              data-prefill.email="{{user.email}}"
+              data-theme.color="#000"
+            ></script>
+            <input type="hidden" custom="Hidden Element" name="hidden">
+            </form>
+            {% endif %}
 
-<!-- RazorPay Section End -->
-                
-                
-                
-            </div> <!-- card-body.// -->
-            </div> <!-- card.// -->
-    
-    </aside> <!-- col.// -->
-    
-    
+            <!-- add style to payment button -->
+            <script>
+              var element = document.querySelector('.razorpay-payment-button');
+              element.className += ' btn btn-primary btn-block';
+            </script>
+
+            <!-- RazorPay Section End -->
+
+
+
+          </div> <!-- card-body.// -->
+        </div> <!-- card.// -->
+
+      </aside> <!-- col.// -->
+
+
     </div> <!-- row.// -->
-   
+
     <!-- ============================ COMPONENT 1 END .// ================================= -->
-    
-    </div> <!-- container .//  -->
-    </section>
-    
+
+  </div> <!-- container .//  -->
+</section>
+
 
 {% endblock content %}
