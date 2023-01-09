@@ -20,7 +20,7 @@ def store(request, category_slug=None):
     products = None
     if category_slug != None:
         categories = get_object_or_404(Category, slug = category_slug)
-        products = Product.objects.filter(category = categories, is_available=True)
+        products = Product.objects.filter(category = categories, is_available=True).order_by('id')
         paginator = Paginator(products, 3)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
@@ -35,7 +35,7 @@ def store(request, category_slug=None):
         'products': paged_products,
         'product_count': product_count,
         }
-    return render(request, 'store.html', context)
+    return render(request, 'store/store.html', context)
 
 def filter_products(request):
     if request.method=='POST':
@@ -132,7 +132,7 @@ def filter_products(request):
             'products': paged_products,
             'product_count': product_count,
         }
-        return render(request, 'store.html', context)
+        return render(request, 'store/store.html', context)
     else:
         return redirect('store')
 
@@ -162,7 +162,7 @@ def product_detail(request, category_slug, product_slug):
         'in_cart': in_cart,
         'reviews' : reviews,
     }
-    return render(request, 'product-detail.html', context)
+    return render(request, 'store/product-detail.html', context)
 
 
 def search(request):
@@ -176,7 +176,7 @@ def search(request):
         'products': products,
         'product_count': product_count,
     }
-    return render(request, 'store.html', context)
+    return render(request, 'store/store.html', context)
 
 
 def submit_review(request, product_id):

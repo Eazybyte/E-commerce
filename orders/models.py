@@ -37,7 +37,7 @@ class Order(models.Model):
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     order_total = models.FloatField()
-    tax = models.FloatField()
+    delivery = models.FloatField()
     status = models.CharField(max_length=50, choices=STATUS, default='New')
     ip = models.CharField(blank=True, max_length=20)
     is_ordered = models.BooleanField(default=False)

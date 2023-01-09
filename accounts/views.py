@@ -81,7 +81,7 @@ def login(request):
             messages.error(request, 'Invalid login Credentials')
             return redirect('login')
 
-    return render(request, 'signin.html')
+    return render(request, 'accounts/signin.html')
 
 
 def register(request):
@@ -103,7 +103,7 @@ def register(request):
             # USER ACTIVATION
             current_site = get_current_site(request)
             mail_subject = 'please activate your Account'
-            message = render_to_string('account_verification_email.html', {
+            message = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -118,7 +118,7 @@ def register(request):
     context = {
         'form': form,
     }
-    return render(request, 'register.html', context)
+    return render(request, 'accounts/register.html', context)
 
 
 def logout(request):
@@ -142,6 +142,10 @@ def activate(request, uidb64, token):
             user = user
         )
         user_profile.save()
+        user_profile = UserProfile.objects.create(
+            user = user
+        )
+        user_profile.save()
         return redirect('login')
     else:
         messages.error(request, 'Inavlid Link')
@@ -158,7 +162,7 @@ def dashboard(request):
     #     'userprofile': userprofile,
     # }
     # return render(request, 'accounts/dashboard.html', context)
-    return render(request, 'dashboard.html')
+    return render(request, 'accounts/dashboard.html')
 
 
 def forgotPassword(request):
@@ -168,7 +172,7 @@ def forgotPassword(request):
             user = Account.objects.get(email__exact=email)
             current_site = get_current_site(request)
             mail_subject = 'Reset your password'
-            message = render_to_string('reset_password_email.html', {
+            message = render_to_string('accounts/reset_password_email.html', {
                 'user': user,
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -182,7 +186,7 @@ def forgotPassword(request):
         else:
             messages.error(request, "Account doesn't exist")
             return redirect('forgotPassword')
-    return render(request, 'forgotpassword.html')
+    return render(request, 'accounts/forgotpassword.html')
 
 
 def resetpassword_validator(request, uidb64, token):
@@ -218,14 +222,16 @@ def resetPassword(request):
             return redirect('resetPassword')
 
     else:
-        return render(request, "resetPassword.html")
+        return render(request, "accounts/resetPassword.html")
 
 
+@login_required(login_url ='login')
 @login_required(login_url ='login')
 def edit_profile(request):
     userprofile = get_object_or_404(UserProfile, user=request.user)
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
@@ -241,7 +247,7 @@ def edit_profile(request):
         'userprofile': userprofile,
     }
     
-    return render(request, 'edit_profile.html', context)
+    return render(request, 'accounts/edit_profile.html', context)
 
 
 @login_required(login_url='login')
@@ -269,27 +275,4 @@ def change_password(request):
             messages.error(request, 'Password Does not Match')
             return redirect('change_password')
 
-    return render(request, 'change_password.html')
-
-@login_required(login_url ='login')
-def order_detail(request, order_id):
-    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
-    order = Order.objects.get(order_number=order_id)
-    subtotal = 0
-    for i in order_detail:
-        subtotal += i.product_price * i.quantity
-    context = {
-        'order_detail': order_detail,
-        'order': order,
-        'subtotal': subtotal,
-        
-    }
-    return render(request, 'accounts/order_detail.html', context)
-
-@login_required(login_url='login')
-def user_cancel_order(request, order_number):
-    order = Order.objects.get(order_number=order_number)
-    order.status = 'Order Cancelled'
-    order.save()
-
-    return render(request, 'accounts/cancel_order.html')
+    return render(request, 'accounts/change_password.html')

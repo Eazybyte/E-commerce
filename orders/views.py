@@ -23,14 +23,17 @@ def payments(request, total = 0):
     current_user = request.user
     cart_item = CartItem.objects.filter(user=current_user)
 
-    tax = 0
+    delivery = 0
     grand_total = 0
     
     for item in cart_item:
         total += (item.product.price * item.quantity)
         
-    tax = (2 * total) / 100
-    grand_total = total + tax
+    if total <=  999:
+        delivery = 80
+    else:
+        delivery = 0
+    grand_total = total + delivery
     
     order_number = request.session['order_number']
     order = Order.objects.get(user=current_user, is_ordered=False,order_number = order_number)
@@ -54,14 +57,14 @@ def payments(request, total = 0):
         'order': order,
         'cart_items': cart_item,
         'total': total,
-        'tax': tax,
+        'delivery': delivery,
         'grand_total': grand_total,
         
         'payment': response_payment,
         'razorpay_merchant_key':settings.RAZOR_KEY_ID,
         'grand_total': grand_total,
     }
-    return render(request, 'payments.html', context)
+    return render(request, 'orders/payments.html', context)
 
 def place_order(request, total=0, quantity=0):
     current_user = request.user
@@ -75,13 +78,16 @@ def place_order(request, total=0, quantity=0):
     
 
     
-    tax = 0
+    delivery = 0
     grand_total = 0
     for cart_item in cart_items:
         total += (cart_item.product.price * cart_item.quantity)
         quantity += cart_item.quantity
-    tax = (2*total)/100
-    grand_total = total + tax
+    if total <=  999:
+        delivery = 80
+    else:
+        delivery = 0
+    grand_total = total + delivery
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -98,7 +104,7 @@ def place_order(request, total=0, quantity=0):
             data.state = form.cleaned_data['state']
             data.city = form.cleaned_data['city']
             data.order_total =  grand_total
-            data.tax = tax
+            data.delivery = delivery
             data.ip = request.META.get('REMOTE_ADDR')
             data.save()
             yr = int(datetime.date.today().strftime('%Y'))
@@ -129,21 +135,24 @@ def payment_success(request):
         
         ordered_products = OrderProduct.objects.filter(order_id=order.id)
         
-        tax = 0
+        delivery = 0
         total = 0
         grand_total = 0
         
         for item in ordered_products:
             total += (item.product_price * item.quantity)
         
-        tax = (2 * total)/100
-        grand_total = total + tax
+        if total <=  999:
+            delivery = 80
+        else:
+            delivery = 0
+        grand_total = total + delivery
         
         #Order Confirmmation Mail
         
         current_site = get_current_site(request)
         mail_subject = "Order Confirmation"
-        message = render_to_string('order_confirmation.html', {
+        message = render_to_string('orders/order_confirmation.html', {
         'order': order,
         'domain': current_site
         })
@@ -157,17 +166,17 @@ def payment_success(request):
             'ordered_products': ordered_products,
             'transaction_id': transaction_id,
             'total': total,
-            'tax': tax,
+            'delivery': delivery,
             'grand_total': grand_total
         }
         
-        return render(request, 'success.html', context)
+        return render(request, 'orders/success.html', context)
     
     except Exception as e:
         raise e
 
 def payment_fail(request):
-  return render(request, 'fail.html')
+  return render(request, 'orders/fail.html')
 
 
 
@@ -237,7 +246,7 @@ def payment_status(request):
         return redirect('payment_fail')
         
 def payment_fail(request):
-  return render(request, 'fail.html')
+  return render(request, 'orders/fail.html')
 
 
 @login_required(login_url ='login')
@@ -246,7 +255,7 @@ def my_orders(request):
     context ={
         'orders':  order,
     }
-    return render(request, 'my_orders.html', context)
+    return render(request, 'orders/my_orders.html', context)
 
 @login_required(login_url='login')
 def user_cancel_order(request, order_number):
@@ -260,10 +269,20 @@ def user_cancel_order(request, order_number):
     payment_id = payment.payment_id
     refund = razorpay_client.payment.refund(payment_id,dict(amount=int(amount)*100))
     print((refund))
+    current_user = request.user
+    order = Order.objects.get(user=current_user, is_ordered=True,order_number = order_number)
+    payment=Payment.objects.get(order_number=order_number)
+    currency = 'INR'
+    razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+    amount= float(payment.amount_paid)
+    print(amount)
+    payment_id = payment.payment_id
+    refund = razorpay_client.payment.refund(payment_id,dict(amount=int(amount)*100))
+    print((refund))
     order.status = 'Order Cancelled'
     order.save()
 
-    return render(request, 'cancel_order.html')
+    return render(request, 'orders/cancel_order.html')
 
 @login_required(login_url ='login')
 def order_detail(request, order_id):
@@ -278,4 +297,4 @@ def order_detail(request, order_id):
         'subtotal': subtotal,
         
     }
-    return render(request, 'order_detail.html', context)
+    return render(request, 'orders/order_detail.html', context)

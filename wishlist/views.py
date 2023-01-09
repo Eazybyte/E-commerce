@@ -106,7 +106,7 @@ def wishlist(request, wishlist_items=None):
     context = {
         'wishlist_items': wishlist_items,
     }
-    return render(request, 'wishlist.html', context)
+    return render(request, 'wishlist/wishlist.html', context)
 
 def move_to_cart(request, product_id):
     current_user = request.user
